@@ -1,5 +1,8 @@
 {
   "unitName": "Developing and Debugging Java Applications",
+  "id": "8bdf6ecc-0b05-42d7-84ce-ae011aa63db7",
+  "title": "Developing and Debugging Java Applications",
+  "description": "Exa-Java-Fundamentals",
   "activities": [
     {
       "activityName": "JDK",
