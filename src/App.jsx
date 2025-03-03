@@ -1,6 +1,5 @@
 import './App.css'
-import { Taxonomy } from './components/Taxonomy'
-
+import { Taxonomy } from './components/navigation/Taxonomy'
 function App() {
 
   return (
