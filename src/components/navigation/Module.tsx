@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { Topic } from "./Topic";
-import { preview } from "vite";
+import { IoMdAddCircle } from "react-icons/io";
 
 export type ModuleType  = {
     title: string,
@@ -29,7 +29,7 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
     const [topicsList, setTopicsList] = useState<TopicType[]> ([]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) :void => {
-        //event.preventDefault();
+        event.preventDefault();
         const { name, value } = event.target;
 
         setCurrentModule(prev => ({
@@ -40,15 +40,15 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
     
     const updateModule = (event) : void => {
         event.preventDefault();
-        console.log(name);
         if(currentModule != null){
             AddModuleToArray(currentModule);
         }
+        closeModule();
     }
 
     const addTopicToArray = (topic:TopicType) : void => {
     
-        setTopicsList([...topicsList, topic]);
+        setTopicsList( prev => ([...prev, topic]));
         setCurrentModule(prev => ({
             ...prev,
             topics: [...topicsList, topic]
@@ -57,7 +57,7 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
     }
 
     return(
-        <section className="border-b-black-800 border-4 w-3xl backdrop-blur-lg rounded-2xl m-5 p-3">
+        <section className=" backdrop-blur-lg m-5 p-3 rounded-lg shadow-md">
             <div className="flex justify-between p-2 pl-6">   
                 <h3 className="text-2xl">Create a Module</h3>            
                 <IoMdCloseCircle onClick={closeModule} className="text-4xl cursor-pointer"></IoMdCloseCircle>
@@ -73,8 +73,13 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
              border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300"/>
 
             <label htmlFor="module_description" className="block text-left pl-6 text-lg ">Topics</label>
-            <button type="button" className="px-6 py-3  text-white bg-black  font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none 
-            focus:ring-2 focus:ring-blue-500 transition duration-200 text-left block my-3 ml-6" onClick={(prev) => setdisplayTopicModule(true)}>Add Topic</button>
+
+            <button type="button"  className="bg-gray-700 
+                my-5 hover:bg-blue-700 text-white font-bold py-2 px-4 
+                rounded flex items-center"onClick={() => setdisplayTopicModule(true)}>
+                    <IoMdAddCircle className="text-amber-50 mr-2"></IoMdAddCircle >
+                    <span>Add Topic</span>
+                </button>
             {/*Display Topic form*/}
             <div>
                 {displayTopicModule && <Topic closeTopic={() => setdisplayTopicModule(false)} addTopicToArray={addTopicToArray}></Topic>}
