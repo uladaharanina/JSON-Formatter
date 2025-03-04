@@ -1,13 +1,13 @@
 {
   "id": "8bdf6ecc-0b05-42d7-84ce-ae011aa63db7",
   "title": "Developing and Debugging Java Applications",
-  "description": "Exa-Java-Fundamentals",
+  "description": "Learn how to code in basic Java, debug applications, and integrate with SQL.",
   "modules": [
       {
           "id": "19127ca9-6a84-4505-a332-cc9eefd893eb",
           "title": "Java-Orientation",
           "url": "modules/java-orientation",
-          "description": " java-orientation",
+          "description": "Get accustomed to Java concepts.",
           "tooltip": " java-orientation",
           "prerequisites": {
               "url": "README",
@@ -87,7 +87,7 @@
           "id": "5f3bff96-9d17-4053-95b3-3b4bff0a1131",
           "title": "Java-Basics",
           "url": "modules/java-basics",
-          "description": " java-basics",
+          "description": "Get hands-on with Java and write some basic programs.",
           "tooltip": " java-basics",
           "prerequisites": {
               "url": "README",
@@ -209,7 +209,7 @@
           "id": "21bda335-fccc-4c6d-aa5c-3bf9dd4fab62",
           "title": "Java Methods and Arrays",
           "url": "modules/java-methods-and-arrays",
-          "description": " java-methods-and-arrays",
+          "description": "Learn how to write/invoke Java methods. Also learn how to work with arrays in Java.",
           "tooltip": " java-methods-and-arrays",
           "prerequisites": {
               "url": "README",
