@@ -55,7 +55,6 @@ export const Taxonomy: React.FC = () => {
         setModulesData(prevModules => [...prevModules, module]);
     }
 
-
     const updateSkills = (skill: string): void => {
         if(!currentSkills.includes(skill)){
             setCurrentSkills(prev => [...prev, skill]);
@@ -105,10 +104,39 @@ export const Taxonomy: React.FC = () => {
             URL.revokeObjectURL(url);
     }
 
+    const removeMetaDataElement = (
+        arrayName: 'tags' | 'exitCriterias' | 'skills' | 'modules',
+        indexToRemove: number
+    ) : void => {
+
+        setCurrentTaxonomy(prevTaxonomy => ({
+            ...prevTaxonomy,
+            [arrayName]: prevTaxonomy[arrayName].filter((_, index) => index !== indexToRemove)
+        }))
+        
+        if(arrayName === 'tags'){
+            setCurrentTags(prev => prev.filter((_, index) => index!== indexToRemove));
+        }
+        
+        if(arrayName ==='skills'){
+            setCurrentSkills(prev => prev.filter((_, index) => index!== indexToRemove));
+        }
+        
+        if(arrayName === 'exitCriterias'){
+            setCurrentExitCriteria(prev => prev.filter((_, index) => index!== indexToRemove));
+        }
+        if(arrayName === 'modules'){
+            alert("remove module");
+            setModulesData(prev => prev.filter((_, index) => index!== indexToRemove));
+        }
+
+    }
+
 
     return(
         <>
-        <form onSubmit = {handleUnitSubmit} className="max-w-lg my-7 mx-auto p-6 bg-white rounded-lg shadow-md">
+        <form onSubmit = {handleUnitSubmit} 
+        className="max-w-lg my-7 mx-auto p-6 bg-white rounded-lg shadow-md">
             <div className="flex gap-[50px] text-2xl justify-between font-bold">
                 <h2>Create a Unit</h2>
                 <IoMdCloseCircle className="cursor-pointer"></IoMdCloseCircle>
@@ -117,20 +145,32 @@ export const Taxonomy: React.FC = () => {
             <label htmlFor="unit_title" className="block text-xl mt-2">Unit Title</label>
             <input type="text" required id="unit_title" 
             
-            onChange ={handleInputChanges}   className="block px-4 py-2 mt-2 border
-            border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
-             focus:ring-blue-500 focus:border-blue-500 transition duration-300" name="title" value={currentTaxonomy.title}/>
+            onChange ={handleInputChanges}   
+                className="block px-4 py-2 mt-2 border
+                border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
+                focus:ring-blue-500 focus:border-blue-500 transition duration-300" 
+                name="title" 
+                value={currentTaxonomy.title}/>
 
-            <label htmlFor="unit_description" className="block text-xl mt-2">Unit Description </label>
-            <input type="text" id="unit_description"  className="block px-4 py-2 mt-2 border
+            <label htmlFor="unit_description" 
+            className="block text-xl mt-2">Unit Description </label>
+            
+            <input type="text" id="unit_description"  
+            className="block px-4 py-2 mt-2 border
             border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
              focus:ring-blue-500 focus:border-blue-500 transition duration-300"
-             onChange ={handleInputChanges} name="description" value={currentTaxonomy.description}/>
+             onChange ={handleInputChanges} 
+             name="description" 
+             value={currentTaxonomy.description}/>
+
              <label className="block text-xl mt-2">Modules</label>
-            <button type="button" onClick={() => setModuleFormDisplay(!moduleFormDisplay)}  
-                className="bg-gray-700 
-                my-5 hover:bg-blue-700 text-white font-bold py-2 px-4 
-                rounded flex items-center"><IoMdAddCircle className="text-amber-50 mr-2"></IoMdAddCircle ><span>Add Module</span></button>
+            <button type="button" 
+                    onClick={() => setModuleFormDisplay(!moduleFormDisplay)}  
+                    className="bg-gray-700 
+                    my-5 hover:bg-blue-700 text-white font-bold py-2 px-4 
+                    rounded flex items-center">
+                    <IoMdAddCircle className="text-amber-50 mr-2"></IoMdAddCircle >
+                    <span>Add Module</span></button>
            
             {
                moduleFormDisplay && <Module closeModule={() => setModuleFormDisplay(false) } AddModuleToArray = {AddModuleToArray}></Module>
@@ -142,7 +182,7 @@ export const Taxonomy: React.FC = () => {
             </h3>
             <ul className="space-y-6">
                 {currentModulesData.map((module: ModuleType, index: number) => (
-                    <div key={index} className="p-6 bg-white rounded-lg shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300">
+                    <div key={index} className="p-6 bg-white flex  justify-between rounded-lg shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300">
                         <li className="space-y-4">
                             <p className="text-xl font-semibold text-indigo-600">Module name: {module.title}</p>
                             <p className="text-gray-700">Module Description: {module.description}</p>
@@ -156,21 +196,22 @@ export const Taxonomy: React.FC = () => {
                                 ))}
                             </ul>
                         </li>
+                        <IoMdCloseCircle className="cursor-pointer text-2xl" onClick={() => removeMetaDataElement('modules', index)}> </IoMdCloseCircle>
                     </div>
                 ))}
             </ul>
 
             <div>
                 <h3  className="text-xl my-3">Skills </h3>
-                <InputSeparator insertNewData={updateSkills}></InputSeparator>
+                <InputSeparator insertNewData={updateSkills} removeData={(index) => removeMetaDataElement('skills', index)}></InputSeparator>
             </div>
             <div>
                 <h3  className="text-xl my-3">Tags </h3>
-                <InputSeparator insertNewData={updateTags}></InputSeparator>
+                <InputSeparator insertNewData={updateTags} removeData={(index) => removeMetaDataElement('tags', index)}></InputSeparator>
             </div>
             <div>
                 <h3  className="text-xl my-3">Exit Criteria</h3>
-                <InputSeparator insertNewData={updateExitCriteria}></InputSeparator>
+                <InputSeparator insertNewData={updateExitCriteria} removeData={(index) => removeMetaDataElement('exitCriterias', index)}></InputSeparator>
             </div>
                 <a href="#" onClick = {handleUnitSubmit} 
                     className="w-full block mt-3 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
