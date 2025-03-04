@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { TopicType } from "./Module";
+import { IDsGenerator } from "../../utils/IDsGenerator";
 
 type TopicProps = {
     closeTopic: () => void,
@@ -9,6 +10,7 @@ type TopicProps = {
 export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : TopicProps) => {
 
     const [currentTopic, setCurreentTopic] = useState<TopicType>({
+        id:"",
         title: "",
         description: "",
     })
@@ -23,11 +25,13 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
 
     }
 
-    const handleSubmit = (event) : void => {
+    const handleSubmit = async (event) : Promise<void> => {
         event.preventDefault();
 
         if(currentTopic.title !== undefined || currentTopic.title !== ""){
-            addTopicToArray(currentTopic);
+            const generatedId = await IDsGenerator(currentTopic.title);
+            const updatedTopic = {...currentTopic, id:generatedId};
+            addTopicToArray(updatedTopic);
         }
         closeTopic();
     }

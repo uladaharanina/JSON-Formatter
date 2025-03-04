@@ -3,10 +3,12 @@ import { IoMdCloseCircle } from "react-icons/io";
 import { Module, ModuleType } from "./Module";
 import React from "react";
 import { IoMdAddCircle } from "react-icons/io";
+import { IDsGenerator } from "../../utils/IDsGenerator";
 
 /*Represenation of Navigation.json */
 
 type TaxonomyType = {
+    id: string,
     title: string,
     description: string,
     modules: ModuleType[],
@@ -16,6 +18,7 @@ export const Taxonomy: React.FC = () => {
 
     const [moduleFormDisplay, setModuleFormDisplay] = useState<boolean>(false);
     const [currentTaxonomy, setCurrentTaxonomy] = useState<TaxonomyType>({
+        id: '',
         title: '',
         description: '',
         modules: []
@@ -39,25 +42,22 @@ export const Taxonomy: React.FC = () => {
         setModulesData(prevModules => [...prevModules, module]);
     }
 
-
-
     //Submit Unit
 
-    const handleUnitSubmit = (event) => {
+    const handleUnitSubmit = async (event) => {
         event.preventDefault();
-        // Serialize data into JSON
-        const formData = JSON.stringify(currentTaxonomy, null, 2);
+
+        const unitId = await IDsGenerator(currentTaxonomy.title);
+        const updatedTaxonomy = {...currentTaxonomy, id: unitId};
+        
+        const formData = JSON.stringify(updatedTaxonomy, null, 2);
         const blob = new Blob([formData], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = url; // Set the href to the Blob URL
-        link.download = currentTaxonomy.title + '.json'; // Set the download filename
-    
-        // Trigger the download by programmatically clicking the link
+        link.href = url; 
+        link.download = currentTaxonomy.title + '.json'; 
         link.click();
-    
-        // Clean up the Object URL after the download
-        URL.revokeObjectURL(url);
+            URL.revokeObjectURL(url);
     }
 
     return(

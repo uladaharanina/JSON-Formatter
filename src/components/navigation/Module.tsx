@@ -2,16 +2,22 @@ import React, { useState } from "react";
 import { IoMdCloseCircle } from "react-icons/io";
 import { Topic } from "./Topic";
 import { IoMdAddCircle } from "react-icons/io";
+import { IDsGenerator } from "../../utils/IDsGenerator";
 
 export type ModuleType  = {
+
+    id:string,
     title: string,
     description: string,
     topics: TopicType[]
 }
 
 export type TopicType  = {
+
+    id:string,
     title: string,
     description: string
+
 }
 
 type Props  ={
@@ -21,6 +27,7 @@ type Props  ={
 export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Props ) => {
 
     const [currentModule,  setCurrentModule] = useState<ModuleType> ({
+        id: '',
         title: '',
         description: '',
         topics: []
@@ -38,10 +45,12 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
         }));
     }
     
-    const updateModule = (event) : void => {
+    const updateModule = async (event) : Promise<void> => {
         event.preventDefault();
         if(currentModule != null){
-            AddModuleToArray(currentModule);
+            const generatedId = await IDsGenerator(currentModule.title);
+            const updatedModule = {...currentModule, id:generatedId};
+            AddModuleToArray(updatedModule);
         }
         closeModule();
     }
