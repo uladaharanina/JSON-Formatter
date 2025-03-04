@@ -4,6 +4,7 @@ import { Module, ModuleType } from "./Module";
 import React from "react";
 import { IoMdAddCircle } from "react-icons/io";
 import { IDsGenerator } from "../../utils/IDsGenerator";
+import { InputSeparator } from "../InputSeparator";
 
 /*Represenation of Navigation.json */
 
@@ -12,6 +13,9 @@ type TaxonomyType = {
     title: string,
     description: string,
     modules: ModuleType[],
+    tags: string[],
+    skills: string[],
+    exitCriterias: string[]
 }
 
 export const Taxonomy: React.FC = () => {
@@ -21,9 +25,18 @@ export const Taxonomy: React.FC = () => {
         id: '',
         title: '',
         description: '',
-        modules: []
+        modules: [],
+        tags: [],
+        skills: [],
+        exitCriterias: []
     })
+
+    // Set the current taxonomy data
     const [currentModulesData, setModulesData] = useState<ModuleType[]>([]);
+    const [currentTags, setCurrentTags] = useState<string[]>([]);
+    const [currentSkills, setCurrentSkills] = useState<string[]>([]);
+    const [currentExitCriteria, setCurrentExitCriteria] = useState<string[]>([]);
+
 
     const handleInputChanges = (event) => {
         event.preventDefault();
@@ -42,14 +55,46 @@ export const Taxonomy: React.FC = () => {
         setModulesData(prevModules => [...prevModules, module]);
     }
 
-    //Submit Unit
 
-    const handleUnitSubmit = async (event) => {
+    const updateSkills = (skill: string): void => {
+        if(!currentSkills.includes(skill)){
+            setCurrentSkills(prev => [...prev, skill]);
+            //Update taxonomy
+            setCurrentTaxonomy(prevTaxonomy => (
+                {...prevTaxonomy, 
+                    skills: [...prevTaxonomy.skills, skill]
+                }))
+        }
+    }
+
+    const updateTags = (currentTag : string): void => {
+        if(!currentTags.includes(currentTag)){
+            setCurrentTags(prev => [...prev, currentTag]);
+             //Update taxonomy
+            setCurrentTaxonomy(prevTaxonomy => (
+                {...prevTaxonomy, 
+                    tags: [...prevTaxonomy.tags, currentTag]
+                }))
+        }
+    }
+
+    const updateExitCriteria = (exitCriteria: string): void => {
+        if(!currentExitCriteria.includes(exitCriteria)){
+            setCurrentExitCriteria(prev => [...prev, exitCriteria]);
+               //Update taxonomy
+            setCurrentTaxonomy(prevTaxonomy => (
+                {...prevTaxonomy, 
+                    exitCriterias: [...prevTaxonomy.exitCriterias, exitCriteria]
+                }))
+        }
+    }
+
+    const handleUnitSubmit = async (event) :Promise<void> => {
         event.preventDefault();
 
         const unitId = await IDsGenerator(currentTaxonomy.title);
         const updatedTaxonomy = {...currentTaxonomy, id: unitId};
-        
+
         const formData = JSON.stringify(updatedTaxonomy, null, 2);
         const blob = new Blob([formData], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -59,6 +104,7 @@ export const Taxonomy: React.FC = () => {
         link.click();
             URL.revokeObjectURL(url);
     }
+
 
     return(
         <>
@@ -113,9 +159,22 @@ export const Taxonomy: React.FC = () => {
                     </div>
                 ))}
             </ul>
+
+            <div>
+                <h3  className="text-xl my-3">Skills </h3>
+                <InputSeparator insertNewData={updateSkills}></InputSeparator>
+            </div>
+            <div>
+                <h3  className="text-xl my-3">Tags </h3>
+                <InputSeparator insertNewData={updateTags}></InputSeparator>
+            </div>
+            <div>
+                <h3  className="text-xl my-3">Exit Criteria</h3>
+                <InputSeparator insertNewData={updateExitCriteria}></InputSeparator>
+            </div>
                 <a href="#" onClick = {handleUnitSubmit} 
                     className="w-full block mt-3 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
-                    text-white font-semibold rounded-lg shadow-lg transform 
+                    text-white font-semibold rounded-lg shadow-lg transform text-center
                     transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl 
                     focus:outline-none focus:ring-2 focus:ring-indigo-300">Generate
                 </a>            
