@@ -11,6 +11,14 @@
   margin-bottom: 10px;
 }
 
+
+.select {
+  font-size: 30px;
+  display: block;
+  margin: auto;
+}
+
 .preview {
   border: dotted;
+  display: none;
 }
