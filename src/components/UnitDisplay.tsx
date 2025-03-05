@@ -3,8 +3,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Activity, HierarchyItem, HierarchyType, Unit } from "../types";
 import './UnitDisplay.css';
 
-import SAMPLE_DATA from '../../sample-jsons/sample-navigation.json';
 import AddActivity from "./AddActivity";
+import UploadJSON from "./UploadJSON";
 
 
 const checkActivityExists = (activityToAdd: Activity, activities: Activity[]) => {
@@ -19,7 +19,7 @@ const checkActivityExists = (activityToAdd: Activity, activities: Activity[]) =>
 }
 
 // Create simplified version of the data, removing unnecessary ids, etc.
-const createFilteredProxy:any = (data:Unit, excludeKeys = ["id", "prerequisites", "description", "tooltip", "url"]) => {
+const createFilteredProxy: any = (data: Unit, excludeKeys = ["id", "prerequisites", "description", "tooltip", "url"]) => {
   if (Array.isArray(data)) {
     return data.map(item => createFilteredProxy(item, excludeKeys));
   } else if (typeof data === "object" && data !== null) {
@@ -27,8 +27,8 @@ const createFilteredProxy:any = (data:Unit, excludeKeys = ["id", "prerequisites"
       get(target, prop) {
         if (typeof prop === 'string' && excludeKeys.includes(prop)) return undefined;
         const value = target[prop as keyof typeof target];
-        return typeof value === "object" && value !== null 
-          ? createFilteredProxy(value, excludeKeys) 
+        return typeof value === "object" && value !== null
+          ? createFilteredProxy(value, excludeKeys)
           : value;
       }
     });
@@ -38,22 +38,31 @@ const createFilteredProxy:any = (data:Unit, excludeKeys = ["id", "prerequisites"
 
 
 function UnitDisplay() {
-  const [unitTaxonomy, setUnitTaxonomy] = useState<Unit>(SAMPLE_DATA);
+  const [unitTaxonomy, setUnitTaxonomy] = useState<Unit>();
   const [currentEdit, setCurrentEdit] = useState<HierarchyItem>({ title: '', id: '' });
 
   useEffect(() => {
     // initialize empty activity arrays for all unit/modules/topics:
-    const dataCopy: Unit = SAMPLE_DATA;
-    dataCopy.activities = [];
-    for (let i = 0; i < dataCopy.modules.length; i++) {
-      dataCopy.modules[i].activities = [];
-      for (let j = 0; j < dataCopy.modules[i].topics.length; j++) {
-        dataCopy.modules[i].topics[j].activities = [];
+    if (unitTaxonomy) {
+      const dataCopy: Unit = unitTaxonomy;
+      dataCopy.activities = [];
+      for (let i = 0; i < dataCopy.modules.length; i++) {
+        dataCopy.modules[i].activities = [];
+        for (let j = 0; j < dataCopy.modules[i].topics.length; j++) {
+          dataCopy.modules[i].topics[j].activities = [];
+        }
       }
     }
+
   }, [unitTaxonomy])
 
+  const uploadJSONHandler = (data: string) => {
+    
+    setUnitTaxonomy(JSON.parse(data));
+  }
+
   const addActivityHandler = (activityDetails: Activity, hierarchyType: HierarchyType, id: string) => {
+    if (!unitTaxonomy) return;
     let taxonomy = structuredClone(unitTaxonomy);
     switch (hierarchyType) {
       case HierarchyType.UNIT:
@@ -121,82 +130,93 @@ function UnitDisplay() {
 
   return (
 
-    <div className='ml-12 my-6  bg-white rounded-lg shadow-md  flex justify-between'>
+    unitTaxonomy ?
 
-      <div>
-        {unitTaxonomy &&
-          <div className='unit'>
-            <h1 className='unit-title font-bold'>{unitTaxonomy.title} (Unit)</h1>
-            <h2 className='font-bold'>Activities:</h2>
-            <ul className="max-w-md space-y-1 list-disc list-inside">
-              {unitTaxonomy.activities?.map((activity: Activity) =>
-                <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
+      (<div className='ml-12 my-6  bg-white rounded-lg shadow-md  flex justify-around'>
+
+
+        <div className=' h-[90vh] overflow-auto'>
+          {unitTaxonomy &&
+            <div className='unit'>
+              <h1 className='unit-title font-bold'>{unitTaxonomy.title} (Unit)</h1>
+              <h2 className='font-bold'>Activities:</h2>
+              <ul className="max-w-md space-y-1 list-disc list-inside">
+                {unitTaxonomy.activities?.map((activity: Activity) =>
+                  <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
+                )}
+              </ul>
+              <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+                text-white font-semibold rounded-lg shadow-lg transform text-center
+                transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+                focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.UNIT, title: unitTaxonomy.title, id: unitTaxonomy.id })}>Add Activity (Unit Level)</button>
+
+              {unitTaxonomy.modules.map(module =>
+                <div className='module bg-gray-300 mb-5 p-4 rounded-xl' key={module.id}>
+                  <h3 className='module-title font-bold'>{module.title} (Module)</h3>
+                  <ul className="max-w-md space-y-1 list-disc list-inside">
+                    {module.activities?.map((activity: Activity) =>
+                      <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
+                    )}
+                  </ul>
+                  <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+                  text-white font-semibold rounded-lg shadow-lg transform text-center
+                  transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+                  focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8"onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.MODULE, title: module.title, id: module.id })}>Add Activity (Module Level)</button>
+
+                  {module.topics.map(topic =>
+                    <div className='topic bg-gray-200 mb-5 p-3 rounded-xl' key={topic.id}>
+                      <p className='topic-title text-xl font-bold'>{topic.title} (Topic)</p>
+                      <ul className="max-w-md space-y-1 list-disc list-inside ">
+                        {topic.activities?.map((activity: Activity) =>
+                          <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
+                        )}
+                      </ul>
+                      <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+                      text-white font-semibold rounded-lg shadow-lg transform text-center
+                      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+                      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.TOPIC, title: topic.title, id: topic.id })}>Add Activity (Topic Level)</button>
+                    </div>
+                  )}
+                </div>
+
               )}
-            </ul>
-            <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+            </div>
+          }
+        </div>
+
+        <div className="add-activity">
+          <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
+
+          <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit:</h2>
+          <button
+            onClick={downloadTaxonomy}
+            className="block  py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
             text-white font-semibold rounded-lg shadow-lg transform text-center
             transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
-            focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.UNIT, title: unitTaxonomy.title, id: unitTaxonomy.id })}>Add Activity (Unit Level)</button>
-
-            {unitTaxonomy.modules.map(module =>
-              <div className='module bg-gray-300 mb-5 p-4 rounded-xl' key={module.id}>
-                <h3 className='module-title font-bold'>{module.title} (Module)</h3>
-                <ul className="max-w-md space-y-1 list-disc list-inside">
-                  {module.activities?.map((activity: Activity) =>
-                    <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
-                  )}
-                </ul>
-                <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
-      text-white font-semibold rounded-lg shadow-lg transform text-center
-      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
-      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8"onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.MODULE, title: module.title, id: module.id })}>Add Activity (Module Level)</button>
-
-                {module.topics.map(topic =>
-                  <div className='topic bg-gray-200 mb-5 p-3 rounded-xl' key={topic.id}>
-                    <p className='topic-title text-xl font-bold'>{topic.title} (Topic)</p>
-                    <ul className="max-w-md space-y-1 list-disc list-inside ">
-                      {topic.activities?.map((activity: Activity) =>
-                        <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
-                      )}
-                    </ul>
-                    <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
-      text-white font-semibold rounded-lg shadow-lg transform text-center
-      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
-      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.TOPIC, title: topic.title, id: topic.id })}>Add Activity (Topic Level)</button>
-                  </div>
-                )}
-              </div>
-
-            )}
-          </div>
-        }
-      </div>
-
-      <div className="add-activity">
-        <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
-
-        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit:</h2>
-        <button
-          onClick={downloadTaxonomy}
-          className="block  py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
-      text-white font-semibold rounded-lg shadow-lg transform text-center
-      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
-      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer"
+            focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer"
 
 
 
-        >Download</button>
+          >Download</button>
 
-        <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
-          {JSON.stringify(previewData, null, 2)}
-        </pre>
-
-
-        
-      </div>
+          <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
+            {JSON.stringify(previewData, null, 2)}
+          </pre>
 
 
-    </div>
+
+        </div>
+
+
+      </div>)
+
+      :
+
+      <UploadJSON onFileRead={uploadJSONHandler}></UploadJSON>
+
+
+
+
   )
 
 }
