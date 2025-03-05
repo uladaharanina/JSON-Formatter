@@ -154,7 +154,7 @@ function UnitDisplay() {
       <div className="add-activity">
         <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
 
-        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit</h2>
+        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Taxonomy with Units</h2>
 
         <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
           {JSON.stringify(unitTaxonomy, null, 2)}
