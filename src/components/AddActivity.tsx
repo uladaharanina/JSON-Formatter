@@ -38,26 +38,29 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
   return (
     <div>
 
-      <div className='preview'>
-        <h1>Preview (DEBUG ONLY)</h1>
-        <h2>{activity?.activityName}</h2>
-        <h2>{activity?.activityPath}</h2>
-        <h2>{activity?.activityType}</h2>
-      </div>
 
-      <form className='form' onSubmit={(e: FormEvent<HTMLFormElement>) => onSubmitHandler(e)}>
+
+      <form className="max-w-lg my-7 mx-auto p-6 bg-white rounded-lg shadow-md" onSubmit={(e: FormEvent<HTMLFormElement>) => onSubmitHandler(e)}>
         {hierarchyItem.hierarchyType ? <>
-          <h2>Add Activity for </h2>
-          <h2>{hierarchyItem.hierarchyType}</h2>
-          <h3>"{hierarchyItem.title}"</h3>
-          <br />
-          <br />
-          <p>Activity Name</p>
-          <input className='input' name='activityName' value={activity?.activityName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
-          <p>Activity Path</p>
-          <input className='input' name='activityPath' value={activity?.activityPath} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
-          <p>Activity Type</p>
-          <select className='select' onChange={(e) => onChangeSelectHandler(e)} value={activity.activityType}>
+          <div className="gap-[50px] text-2xl font-bold text-center">
+            <h2 className="text-3xl">Add Activity</h2>
+            <h2 className="text-2xl">{hierarchyItem.hierarchyType}</h2>
+            <h3>"{hierarchyItem.title}"</h3>
+          </div>
+
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Name</label>
+          <input id="activity-name" type="text" className="block px-4 py-2 mt-2 border
+            border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
+             focus:ring-blue-500 focus:border-blue-500 transition duration-300 w-1/1" name='activityName' value={activity?.activityName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
+
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Path</label>
+          <input id="activity-name" type="text" className="block px-4 py-2 mt-2 border
+            border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
+             focus:ring-blue-500 focus:border-blue-500 transition duration-300 w-1/1" name='activityPath' value={activity?.activityPath} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
+
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Type</label>
+          <select className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-white placeholder-gray-500
+" onChange={(e) => onChangeSelectHandler(e)} value={activity.activityType}>
             <option value='AdminTask'>Admin Task</option>
             <option value='Assessment -> Project Evaluation'>Project Evaluation</option>
             <option value='Assessment -> Exam'>Exam</option>
@@ -81,7 +84,10 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
           </select>
 
 
-          <button type='submit'>Add Activity</button>
+          <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+      text-white font-semibold rounded-lg shadow-lg transform text-center
+      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer block" type='submit'>Add Activity</button>
         </> :
           <h2>Select a button on the left to access this form</h2>}
       </form>
