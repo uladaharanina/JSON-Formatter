@@ -3,6 +3,7 @@ import { Taxonomy } from './components/navigation/Taxonomy'
 import { Header } from './components/Header';
 import { useState } from 'react';
 import React from 'react';
+import UnitDisplay from './components/UnitDisplay';
 
 
 const App = () => {
@@ -60,6 +61,8 @@ const App = () => {
           </section>
       }
       </div>
+
+      <UnitDisplay/>
     </>
   )
 }
