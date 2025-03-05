@@ -18,7 +18,11 @@ type TaxonomyType = {
     exitCriterias: string[]
 }
 
-export const Taxonomy: React.FC = () => {
+type Props = {
+    closeForm: () => void,
+}
+
+export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
 
     const [moduleFormDisplay, setModuleFormDisplay] = useState<boolean>(false);
     const [currentTaxonomy, setCurrentTaxonomy] = useState<TaxonomyType>({
@@ -138,7 +142,7 @@ export const Taxonomy: React.FC = () => {
         className="max-w-lg my-7 mx-auto p-6 bg-white rounded-lg shadow-md">
             <div className="flex gap-[50px] text-2xl justify-between font-bold">
                 <h2>Create a Unit</h2>
-                <IoMdCloseCircle className="cursor-pointer"></IoMdCloseCircle>
+                <IoMdCloseCircle className="cursor-pointer" onClick={closeForm}></IoMdCloseCircle>
             </div>
 
             <label htmlFor="unit_title" className="block text-xl mt-2">Unit Title</label>
