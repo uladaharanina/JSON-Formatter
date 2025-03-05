@@ -28,7 +28,7 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
 
     }
 
-    const handleSubmit = async (event) : Promise<void> => {
+    const handleSubmit = async (event:any) : Promise<void> => {
         event.preventDefault();
 
         if(currentTopic.title !== undefined && currentTopic.title !== ""){

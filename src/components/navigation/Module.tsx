@@ -48,7 +48,7 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
         }));
     }
     
-    const updateModule = async (event) : Promise<void> => {
+    const updateModule = async (event:any) : Promise<void> => {
 
         event.preventDefault();
         if(currentModule.title != ""){

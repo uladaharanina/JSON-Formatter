@@ -44,7 +44,7 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
     const [errorMessage, setErrorMessage] = useState<string | null> (null);
 
 
-    const handleInputChanges = (event) => {
+    const handleInputChanges = (event:any) => {
         event.preventDefault();
         setErrorMessage(null);
         const { name, value } = event.target;
@@ -95,7 +95,7 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
         }
     }
 
-    const handleUnitSubmit = async (event) :Promise<void> => {
+    const handleUnitSubmit = async (event:any) :Promise<void> => {
         event.preventDefault();
         if(currentTaxonomy.title == ''){
             setErrorMessage("Unit title cannot be empty");
