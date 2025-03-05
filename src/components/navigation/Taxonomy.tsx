@@ -126,7 +126,6 @@ export const Taxonomy: React.FC = () => {
             setCurrentExitCriteria(prev => prev.filter((_, index) => index!== indexToRemove));
         }
         if(arrayName === 'modules'){
-            alert("remove module");
             setModulesData(prev => prev.filter((_, index) => index!== indexToRemove));
         }
 
