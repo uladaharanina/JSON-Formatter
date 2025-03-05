@@ -100,7 +100,7 @@ function UnitDisplay() {
 
   return (
 
-    <div className='ml-12 my-6 px-6 py-4 bg-white rounded-lg shadow-md w-4/5 flex justify-between'>
+    <div className='ml-12 my-6  bg-white rounded-lg shadow-md  flex justify-between'>
 
       <div>
         {unitTaxonomy &&
