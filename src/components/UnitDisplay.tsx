@@ -88,7 +88,7 @@ function UnitDisplay() {
 
   const downloadTaxonomy = () => {
     const fileData = JSON.stringify(unitTaxonomy);
-    const blob = new Blob([fileData], {type: 'text/json'});
+    const blob = new Blob([fileData], { type: 'text/json' });
     const url = URL.createObjectURL(blob);
     const linkElement = document.createElement('a');
     linkElement.download = 'taxonomy-with-activities.json';
@@ -100,40 +100,48 @@ function UnitDisplay() {
 
   return (
 
-    <div className='container'>
-      <button onClick={downloadTaxonomy}>Download New Taxonomy</button>
+    <div className='ml-12 my-6 px-6 py-4 bg-white rounded-lg shadow-md w-4/5 flex justify-between'>
+
       <div>
         {unitTaxonomy &&
           <div className='unit'>
-            <h1 className='unit-title'>{unitTaxonomy.title} (Unit)</h1>
-            <h2 className='unit-description'>{unitTaxonomy.description}</h2>
-            <ul>
+            <h1 className='unit-title font-bold'>{unitTaxonomy.title} (Unit)</h1>
+            <h2 className='font-bold'>Activities:</h2>
+            <ul className="max-w-md space-y-1 list-disc list-inside">
               {unitTaxonomy.activities?.map((activity: Activity) =>
-                <li key={activity.activityName + activity.activityType}>{activity.activityName}</li>
+                <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
               )}
             </ul>
-            <button onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.UNIT, title: unitTaxonomy.title, id: unitTaxonomy.id })}>Add Activity (Unit Level)</button>
+            <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+            text-white font-semibold rounded-lg shadow-lg transform text-center
+            transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+            focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.UNIT, title: unitTaxonomy.title, id: unitTaxonomy.id })}>Add Activity (Unit Level)</button>
 
             {unitTaxonomy.modules.map(module =>
-              <div className='module' key={module.id}>
-                <h3 className='module-title'>{module.title} (Module)</h3>
-                <h3 className='module-description'>{module.description}</h3>
-                <ul>
+              <div className='module bg-gray-300 mb-5 p-4 rounded-xl' key={module.id}>
+                <h3 className='module-title font-bold'>{module.title} (Module)</h3>
+                <ul className="max-w-md space-y-1 list-disc list-inside">
                   {module.activities?.map((activity: Activity) =>
-                    <li key={activity.activityName + activity.activityType}>{activity.activityName}</li>
+                    <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
                   )}
                 </ul>
-                <button onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.MODULE, title: module.title, id: module.id })}>Add Activity (Module Level)</button>
+                <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+      text-white font-semibold rounded-lg shadow-lg transform text-center
+      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer mb-8"onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.MODULE, title: module.title, id: module.id })}>Add Activity (Module Level)</button>
 
                 {module.topics.map(topic =>
-                  <div className='topic' key={topic.id}>
-                    <p className='topic-title'>{topic.title} (Topic)</p>
-                    <ul>
+                  <div className='topic bg-gray-200 mb-5 p-3 rounded-xl' key={topic.id}>
+                    <p className='topic-title text-xl font-bold'>{topic.title} (Topic)</p>
+                    <ul className="max-w-md space-y-1 list-disc list-inside ">
                       {topic.activities?.map((activity: Activity) =>
-                        <li key={activity.activityName + activity.activityType}>{activity.activityName}</li>
+                        <li key={activity.activityName + activity.activityType}>{activity.activityName} ({activity.activityType})</li>
                       )}
                     </ul>
-                    <button onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.TOPIC, title: topic.title, id: topic.id })}>Add Activity (Topic Level)</button>
+                    <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+      text-white font-semibold rounded-lg shadow-lg transform text-center
+      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer" onClick={() => setCurrentEdit({ hierarchyType: HierarchyType.TOPIC, title: topic.title, id: topic.id })}>Add Activity (Topic Level)</button>
                   </div>
                 )}
               </div>
@@ -145,8 +153,26 @@ function UnitDisplay() {
 
       <div className="add-activity">
         <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
+
+        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit</h2>
+
+        <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
+          {JSON.stringify(unitTaxonomy, null, 2)}
+        </pre>
+
+
+        <button
+          onClick={downloadTaxonomy}
+          className="block mt-12 m-12 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+      text-white font-semibold rounded-lg shadow-lg transform text-center
+      transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
+      focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer"
+
+
+
+        >Download New Taxonomy</button>
       </div>
-    
+
 
     </div>
   )

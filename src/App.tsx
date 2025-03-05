@@ -65,7 +65,7 @@ const App = ({ onClick, text }:AppProps) => {
         </section>
       }
       </div>
-      <section>
+      <section className = "min-h-screen bg-gray-100 text-gray-900 py-10">
               <UnitDisplay/>
           </section>
     </>
