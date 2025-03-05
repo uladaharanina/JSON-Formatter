@@ -40,10 +40,13 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
     const [currentTags, setCurrentTags] = useState<string[]>([]);
     const [currentSkills, setCurrentSkills] = useState<string[]>([]);
     const [currentExitCriteria, setCurrentExitCriteria] = useState<string[]>([]);
+    // Error handling
+    const [errorMessage, setErrorMessage] = useState<string | null> (null);
 
 
     const handleInputChanges = (event) => {
         event.preventDefault();
+        setErrorMessage(null);
         const { name, value } = event.target;
         setCurrentTaxonomy(
             {...currentTaxonomy, 
@@ -94,18 +97,23 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
 
     const handleUnitSubmit = async (event) :Promise<void> => {
         event.preventDefault();
-
-        const unitId = await IDsGenerator(currentTaxonomy.title);
-        const updatedTaxonomy = {...currentTaxonomy, id: unitId};
-
-        const formData = JSON.stringify(updatedTaxonomy, null, 2);
-        const blob = new Blob([formData], {type: 'application/json'});
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url; 
-        link.download = currentTaxonomy.title + '.json'; 
-        link.click();
-            URL.revokeObjectURL(url);
+        if(currentTaxonomy.title == ''){
+            setErrorMessage("Unit title cannot be empty");
+        }
+        else{
+            const unitId = await IDsGenerator(currentTaxonomy.title);
+            const updatedTaxonomy = {...currentTaxonomy, id: unitId};
+    
+            const formData = JSON.stringify(updatedTaxonomy, null, 2);
+            const blob = new Blob([formData], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url; 
+            link.download = currentTaxonomy.title + '.json'; 
+            link.click();
+                URL.revokeObjectURL(url);
+        }
+      
     }
 
     const removeMetaDataElement = (
@@ -144,7 +152,9 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
                 <h2>Create a Unit</h2>
                 <IoMdCloseCircle className="cursor-pointer" onClick={closeForm}></IoMdCloseCircle>
             </div>
-
+            {
+                errorMessage && <p className="text-red-600 text-left mb-4">{errorMessage}</p>
+            }
             <label htmlFor="unit_title" className="block text-xl mt-2">Unit Title</label>
             <input type="text" required id="unit_title" 
             
@@ -187,8 +197,8 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
                 {currentModulesData.map((module: ModuleType, index: number) => (
                     <div key={index} className="p-6 bg-white flex  justify-between rounded-lg shadow-md border border-gray-200 hover:shadow-xl transition-all duration-300">
                         <li className="space-y-4">
-                            <p className="text-xl font-semibold text-indigo-600">Module name: {module.title}</p>
-                            <p className="text-gray-700">Module Description: {module.description}</p>
+                            <p className="text-xl font-semibold text-indigo-600">{module.title}</p>
+                            <p className="text-gray-700">{module.description}</p>
                             <p className="text-lg font-medium text-gray-900">Related Topics:</p>
 
                             <ul className="pl-6 space-y-2">
