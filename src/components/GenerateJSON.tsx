@@ -44,7 +44,7 @@ const GenerateJSON = () => {
         !displayUnitCreationForm &&
         <section className='flex'>
 
-          <section className="  ml-12 my-6 px-6 py-4 bg-white rounded-lg shadow-md w-[600px]">
+          <section className="  mx-auto my-6 px-6 py-4 bg-white rounded-lg shadow-md w-[600px]">
             <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit</h2>
 
             <pre className="bg-white-800 w-[500px] m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
