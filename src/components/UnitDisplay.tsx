@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 import { Activity, HierarchyItem, HierarchyType, Unit } from "../types";
 import './UnitDisplay.css';
@@ -17,6 +17,24 @@ const checkActivityExists = (activityToAdd: Activity, activities: Activity[]) =>
   }
   return found;
 }
+
+// Create simplified version of the data, removing unnecessary ids, etc.
+const createFilteredProxy:any = (data:Unit, excludeKeys = ["id", "prerequisites", "description", "tooltip", "url"]) => {
+  if (Array.isArray(data)) {
+    return data.map(item => createFilteredProxy(item, excludeKeys));
+  } else if (typeof data === "object" && data !== null) {
+    return new Proxy(data, {
+      get(target, prop) {
+        if (typeof prop === 'string' && excludeKeys.includes(prop)) return undefined;
+        const value = target[prop as keyof typeof target];
+        return typeof value === "object" && value !== null 
+          ? createFilteredProxy(value, excludeKeys) 
+          : value;
+      }
+    });
+  }
+  return data;
+};
 
 
 function UnitDisplay() {
@@ -87,7 +105,7 @@ function UnitDisplay() {
   }
 
   const downloadTaxonomy = () => {
-    const fileData = JSON.stringify(unitTaxonomy);
+    const fileData = JSON.stringify(previewData);
     const blob = new Blob([fileData], { type: 'text/json' });
     const url = URL.createObjectURL(blob);
     const linkElement = document.createElement('a');
@@ -95,6 +113,9 @@ function UnitDisplay() {
     linkElement.href = url;
     linkElement.click();
   }
+
+  const previewData = useMemo(() => createFilteredProxy(unitTaxonomy), [unitTaxonomy]);
+
 
 
 
@@ -154,23 +175,24 @@ function UnitDisplay() {
       <div className="add-activity">
         <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
 
-        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit</h2>
-
-        <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
-          {JSON.stringify(unitTaxonomy, null, 2)}
-        </pre>
-
-
+        <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit:</h2>
         <button
           onClick={downloadTaxonomy}
-          className="block mt-12 m-12 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
+          className="block  py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
       text-white font-semibold rounded-lg shadow-lg transform text-center
       transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
       focus:outline-none focus:ring-2 focus:ring-indigo-300 cursor-pointer"
 
 
 
-        >Download New Taxonomy</button>
+        >Download</button>
+
+        <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
+          {JSON.stringify(previewData, null, 2)}
+        </pre>
+
+
+        
       </div>
 
 
