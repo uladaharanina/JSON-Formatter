@@ -36,18 +36,19 @@ function UnitDisplay() {
   }, [unitTaxonomy])
 
   const addActivityHandler = (activityDetails: Activity, hierarchyType: HierarchyType, id: string) => {
-    const taxonomy = unitTaxonomy;
+    let taxonomy = structuredClone(unitTaxonomy);
     switch (hierarchyType) {
       case HierarchyType.UNIT:
-        setUnitTaxonomy(addActivityToUnit(taxonomy, activityDetails, id));
+        taxonomy = addActivityToUnit(taxonomy, activityDetails, id);
         break;
       case HierarchyType.MODULE:
-        setUnitTaxonomy(addActivityToModule(taxonomy, activityDetails, id));
+        taxonomy = addActivityToModule(taxonomy, activityDetails, id);
         break;
       case HierarchyType.TOPIC:
-        setUnitTaxonomy(addActivityToTopic(taxonomy, activityDetails, id));
+        taxonomy = addActivityToTopic(taxonomy, activityDetails, id);
         break;
     }
+    setUnitTaxonomy(taxonomy);
   }
 
   const addActivityToUnit = (taxonomy: Unit, activityDetails: Activity, id: string) => {
@@ -85,9 +86,22 @@ function UnitDisplay() {
     return taxonomy;
   }
 
+  const downloadTaxonomy = () => {
+    const fileData = JSON.stringify(unitTaxonomy);
+    const blob = new Blob([fileData], {type: 'text/json'});
+    const url = URL.createObjectURL(blob);
+    const linkElement = document.createElement('a');
+    linkElement.download = 'taxonomy-with-activities.json';
+    linkElement.href = url;
+    linkElement.click();
+  }
+
+
+
   return (
 
     <div className='container'>
+      <button onClick={downloadTaxonomy}>Download New Taxonomy</button>
       <div>
         {unitTaxonomy &&
           <div className='unit'>
@@ -132,6 +146,7 @@ function UnitDisplay() {
       <div className="add-activity">
         <AddActivity hierarchyItem={currentEdit} addActivityFunc={addActivityHandler} />
       </div>
+    
 
     </div>
   )
