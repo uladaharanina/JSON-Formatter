@@ -14,9 +14,12 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
         title: "",
         description: "",
     })
+    // Error handling
+    const [errorMessage, setErrorMessage] = useState<string | null> (null);
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) : void => {
         event.preventDefault();
+        setErrorMessage(null);
         const { name, value } = event.target;
         setCurreentTopic( prev => (
             {...prev, 
@@ -28,12 +31,15 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
     const handleSubmit = async (event) : Promise<void> => {
         event.preventDefault();
 
-        if(currentTopic.title !== undefined || currentTopic.title !== ""){
+        if(currentTopic.title !== undefined && currentTopic.title !== ""){
             const generatedId = await IDsGenerator(currentTopic.title);
             const updatedTopic = {...currentTopic, id:generatedId};
             addTopicToArray(updatedTopic);
+            closeTopic();
         }
-        closeTopic();
+        else{
+            setErrorMessage("Please enter a topic title");
+        }
     }
 
     return(
@@ -42,7 +48,9 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
                 <h3 className="text-2xl">Add Topic</h3>
                 <IoMdCloseCircle onClick={closeTopic} className="text-2xl cursor-pointer"></IoMdCloseCircle>
             </div>
-
+            {
+                errorMessage && <div className="text-red-500 text-center mt-5">{errorMessage}</div>
+            }
             <label htmlFor="title" className="block text-left pl-6 mt-5  text-lg">Topic Title</label>
             <input type="text" name="title"
                 className="block ml-5 px-4 py-2 mt-2 border w-[90%]

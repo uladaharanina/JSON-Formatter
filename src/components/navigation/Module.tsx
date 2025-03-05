@@ -34,9 +34,12 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
     });
     const [displayTopicModule, setdisplayTopicModule] = useState<boolean> (false);
     const [topicsList, setTopicsList] = useState<TopicType[]> ([]);
+    const [errorMessage, setErrorMessage] = useState<string | null> (null);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) :void => {
         event.preventDefault();
+        setErrorMessage(null);
+
         const { name, value } = event.target;
 
         setCurrentModule(prev => ({
@@ -46,13 +49,17 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
     }
     
     const updateModule = async (event) : Promise<void> => {
+
         event.preventDefault();
-        if(currentModule != null){
+        if(currentModule.title != ""){
             const generatedId = await IDsGenerator(currentModule.title);
             const updatedModule = {...currentModule, id:generatedId};
             AddModuleToArray(updatedModule);
+            closeModule();
         }
-        closeModule();
+        else{
+            setErrorMessage("Module title can't be null")
+        }
     }
 
     const addTopicToArray = (topic:TopicType) : void => {
@@ -86,13 +93,13 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
                 onClick={closeModule} 
                 className="text-4xl cursor-pointer"></IoMdCloseCircle>
             </div>
+            {errorMessage && <p className="text-red-600 text-left ml-6 mb-4">{errorMessage}</p>}
             <label 
             htmlFor="module_title" 
             className="block text-left pl-6 text-lg">Module Title</label>
             <input type="text" 
                 value={currentModule?.title || ''} 
                 onChange={handleChange}  
-                required 
                 name = "title"  
                 id="module_title" 
                 className="block ml-5 px-4 py-2 mt-2 border
@@ -128,8 +135,8 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
                 {displayTopicModule && <Topic closeTopic={() => setdisplayTopicModule(false)} addTopicToArray={addTopicToArray}></Topic>}
             </div>
              {/*Display Added Topics*/}
-             <p className="text-xl my-5">Selected Topics:</p>
-             {  topicsList.length < 1 ? "No Topics Selected" :
+             <p className="text-xl my-5 ml-6">Selected Topics:</p>
+             {  topicsList.length < 1 ? <p className="text-md my-2 ml-6">No Topics Selected</p> :
                 topicsList.map((topic:TopicType, index:number) => (
                     <div key={index} 
                         className="py-2 px-5 bg-gray-200  text-black mx-1 my-3
