@@ -1,22 +1,27 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { Unit, Activity, AddActivityProps } from "../types";
+import { Activity, AddActivityProps } from "../types";
 
 import './AddActivity.css';
 
 function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
 
-  const [activity, setActivity] = useState<Activity>({ activityName: 'Default Activity Name', activityPath: './path', activityType: 'lecture' });
+  const [activity, setActivity] = useState<Activity>({ activityName: 'Default Activity Name', activityPath: './path', activityType: 'lecture', isILT: false, isIST: false, isPLT: false });
 
   useEffect(() => {
 
   }, [])
 
   const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.name);
-    console.log(event.target.value);
     setActivity({
       ...activity,
       [event.target.name]: event.target.value
+    })
+  }
+
+  const onChangeCheckboxHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    setActivity({
+      ...activity,
+      [event.target.name]: event.target.checked
     })
   }
 
@@ -25,21 +30,21 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
       ...activity,
       activityType: event.target.value
     })
-
   }
 
   const onSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
-    if (!hierarchyItem.hierarchyType) return;
     event.preventDefault();
+    if(!(activity.isILT || activity.isIST || activity.isPLT)) {
+      alert('Need to choose at least one training format (ILT, IST, PST)')
+      return;
+    }
 
+    if (!hierarchyItem.hierarchyType) return;
     addActivityFunc(activity, hierarchyItem.hierarchyType, hierarchyItem.id);
   }
 
   return (
     <div>
-
-
-
       <form className="max-w-lg my-7 mx-auto p-6 bg-white rounded-lg shadow-md" onSubmit={(e: FormEvent<HTMLFormElement>) => onSubmitHandler(e)}>
         {hierarchyItem.hierarchyType ? <>
           <div className="gap-[50px] text-2xl font-bold text-center">
@@ -82,6 +87,13 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
             <option value='Self study'>Self Study</option>
             <option value='Office Hours'>Office Hours</option>
           </select>
+
+          <label htmlFor="ILT">ILT</label>
+          <input id = "ILT" checked={activity?.isILT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isILT'/>
+          <label htmlFor="IST">IST</label>
+          <input id = "IST" checked={activity?.isIST} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isIST'/>
+          <label htmlFor="PLT">PLT</label>
+          <input id = "PLT" checked={activity?.isPLT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isPLT'/>
 
 
           <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 

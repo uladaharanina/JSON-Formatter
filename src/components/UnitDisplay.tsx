@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, act } from "react";
 
 import { Activity, HierarchyItem, HierarchyType, Unit } from "../types";
 import './UnitDisplay.css';
@@ -6,7 +6,10 @@ import './UnitDisplay.css';
 import AddActivity from "./AddActivity";
 import UploadJSON from "./UploadJSON";
 
+type activityKey = "isILT" | "isIST" | "isPLT";
 
+// Ensure that an activity with the same name and type does not exist in the array 
+// to which we are trying to push a new activity
 const checkActivityExists = (activityToAdd: Activity, activities: Activity[]) => {
   let found = false;
   for (const activity of activities) {
@@ -36,31 +39,54 @@ const createFilteredProxy: any = (data: Unit, excludeKeys = ["id", "prerequisite
   return data;
 };
 
+// Given a unit to be downloaded, remove the format fields such as "PLT", "ILT", "IST" from each activity
+const removeFormatTags = (unit: Unit) => {
+  // Quick helper method:
+  const filterActivitiesArray = (activity:Activity) => ({
+    activityName: activity.activityName,
+    activityPath: activity.activityPath,
+    activityType: activity.activityType
+  })
+  // unit:
+  unit.activities = unit.activities?.map(filterActivitiesArray)
+
+  //modules and topics:
+  for(let i = 0; i < unit.modules.length; i ++) {
+    unit.modules[i].activities = unit.modules[i].activities?.map(filterActivitiesArray);
+    for(let j = 0; j < unit.modules[i].topics.length; j ++) {
+      unit.modules[i].topics[j].activities = unit.modules[i].topics[j].activities?.map(filterActivitiesArray);
+    }
+  }
+
+  return unit;
+}
+
 
 function UnitDisplay() {
   const [unitTaxonomy, setUnitTaxonomy] = useState<Unit>();
   const [currentEdit, setCurrentEdit] = useState<HierarchyItem>({ title: '', id: '' });
 
-  useEffect(() => {
-    // initialize empty activity arrays for all unit/modules/topics:
-    if (unitTaxonomy) {
-      const dataCopy: Unit = unitTaxonomy;
-      dataCopy.activities = [];
-      for (let i = 0; i < dataCopy.modules.length; i++) {
-        dataCopy.modules[i].activities = [];
-        for (let j = 0; j < dataCopy.modules[i].topics.length; j++) {
-          dataCopy.modules[i].topics[j].activities = [];
+  const previewData = useMemo(() => createFilteredProxy(unitTaxonomy), [unitTaxonomy]);
+
+
+
+  // Handle JSON uploads and update state accordingly
+  // Also, initialize each hierarchy item to have an empty list of activities
+  const uploadJSONHandler = (data: string) => {
+    const dataParsed = JSON.parse(data);
+
+    dataParsed.activities = [];
+      for (let i = 0; i < dataParsed.modules.length; i++) {
+        dataParsed.modules[i].activities = [];
+        for (let j = 0; j < dataParsed.modules[i].topics.length; j++) {
+          dataParsed.modules[i].topics[j].activities = [];
         }
       }
-    }
 
-  }, [unitTaxonomy])
-
-  const uploadJSONHandler = (data: string) => {
-    
-    setUnitTaxonomy(JSON.parse(data));
+    setUnitTaxonomy(dataParsed);
   }
 
+  // Given an activity and an associated hierarchy item (unit/module/topic), add the activity:
   const addActivityHandler = (activityDetails: Activity, hierarchyType: HierarchyType, id: string) => {
     if (!unitTaxonomy) return;
     let taxonomy = structuredClone(unitTaxonomy);
@@ -78,15 +104,19 @@ function UnitDisplay() {
     setUnitTaxonomy(taxonomy);
   }
 
+  // Separate methods for adding to unit, module, and topic
+  // add activity to given unit (designated by id paramter)
   const addActivityToUnit = (taxonomy: Unit, activityDetails: Activity, id: string) => {
     let activities = taxonomy.activities;
     if (taxonomy.id === id) {
+      console.log("Got here");
       if (!checkActivityExists(activityDetails, activities!)) taxonomy.activities?.push(activityDetails);
       else alert('Duplicate Activity Name + Type')
     }
     return taxonomy;
   }
 
+  // add activity to given module (designated by id parameter)
   const addActivityToModule = (taxonomy: Unit, activityDetails: Activity, id: string) => {
     for (let i = 0; i < taxonomy?.modules.length; i++) {
       if (taxonomy?.modules[i].id === id) {
@@ -99,6 +129,7 @@ function UnitDisplay() {
     return taxonomy;
   }
 
+  // add activity to given module (designated by id parameter)
   const addActivityToTopic = (taxonomy: Unit, activityDetails: Activity, id: string) => {
     for (let i = 0; i < taxonomy?.modules.length; i++) {
       for (let j = 0; j < (taxonomy?.modules[i].topics?.length || 0); j++) {
@@ -113,17 +144,51 @@ function UnitDisplay() {
     return taxonomy;
   }
 
-  const downloadTaxonomy = () => {
-    const fileData = JSON.stringify(previewData);
-    const blob = new Blob([fileData], { type: 'text/json' });
+
+
+  const downloadTaxonomyAllFormats = () => {
+    downloadTaxonomyOneFormat('isILT');
+    downloadTaxonomyOneFormat('isIST')
+    downloadTaxonomyOneFormat('isPLT')
+  }
+
+  const downloadTaxonomyOneFormat = (key: activityKey) => {
+    if (!unitTaxonomy) return;
+    // only grab activities for the designated format:
+    let dataFiltered: Unit = filterActivitiesByFormat(structuredClone(JSON.parse(JSON.stringify(previewData, null, 2))), key);
+    
+    // TODO: remove unwanted fields (isPLT, isILT, etc.)
+    dataFiltered = removeFormatTags(dataFiltered);
+
+    const fileData = JSON.stringify(dataFiltered);
+    // create a blob and remove all unnecessary fields
+    const blob = new Blob([createFilteredProxy(fileData)], { type: 'text/json' });
     const url = URL.createObjectURL(blob);
     const linkElement = document.createElement('a');
-    linkElement.download = 'taxonomy-with-activities.json';
+    linkElement.download = `${unitTaxonomy?.title}-taxonomy-${key.substring(2)}.json`;
     linkElement.href = url;
     linkElement.click();
   }
 
-  const previewData = useMemo(() => createFilteredProxy(unitTaxonomy), [unitTaxonomy]);
+  const filterActivitiesByFormat = (data:Unit, key:activityKey) => {
+    // Unit Level
+    data.activities = data.activities?.filter((activity:Activity) => activity[key])
+
+    // Module Level
+    for(let i = 0; i < data.modules.length; i ++) {
+      data.modules[i].activities = data.modules[i].activities?.filter(activity => activity[key])
+    }
+
+    // Topic Level
+    for(let i = 0; i < data.modules.length; i ++) {
+      for(let j = 0; j < data.modules.length; j ++) {
+        data.modules[i].topics[j].activities = data.modules[i].topics[j].activities?.filter(activity => activity[key])
+      }
+    }
+    return data;
+  };
+
+
 
 
 
@@ -189,7 +254,7 @@ function UnitDisplay() {
 
           <h2 className="text-2xl font-semibold text-center mb-4 mt-5">Preview of Unit:</h2>
           <button
-            onClick={downloadTaxonomy}
+            onClick={downloadTaxonomyAllFormats}
             className="block  py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
             text-white font-semibold rounded-lg shadow-lg transform text-center
             transition duration-300 ease-in-out hover:scale-105 hover:shadow-2xl mx-auto 
@@ -197,7 +262,7 @@ function UnitDisplay() {
 
 
 
-          >Download</button>
+          >Download (3 Files)</button>
 
           <pre className="bg-white-800  m-auto text-blue-950 p-6 rounded-lg shadow-xl font-mono text-sm whitespace-pre-wrap ">
             {JSON.stringify(previewData, null, 2)}

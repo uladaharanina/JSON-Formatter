@@ -17,6 +17,9 @@ type Activity = {
   activityName: string,
   activityType: string,
   activityPath: string,
+  isILT?: boolean,
+  isIST?: boolean,
+  isPLT?: boolean,
 }
 
 type Topic = {
