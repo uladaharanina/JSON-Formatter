@@ -15,7 +15,7 @@ const App = ({ onClick, text }: AppProps) => {
       <Header></Header>
         <Routes>
 
-          <Route path="/json" Component={GenerateJSON} />
+          <Route path="/" Component={GenerateJSON} />
           <Route path="/activities" Component={GenerateActivities} />
         </Routes>
 
