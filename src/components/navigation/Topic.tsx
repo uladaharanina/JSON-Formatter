@@ -51,7 +51,7 @@ export const Topic:React.FC<TopicProps> = ({closeTopic, addTopicToArray} : Topic
             {
                 errorMessage && <div className="text-red-500 text-center mt-5">{errorMessage}</div>
             }
-            <label htmlFor="title" className="block text-left pl-6 mt-5  text-lg">Topic Title</label>
+            <label htmlFor="title" className="block text-left pl-6 mt-5  text-lg">Topic Title<span className="text-red-500">*</span></label>
             <input type="text" name="title"
                 className="block ml-5 px-4 py-2 mt-2 border w-[90%]
                 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2

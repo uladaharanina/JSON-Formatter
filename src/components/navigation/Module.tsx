@@ -96,7 +96,7 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
             {errorMessage && <p className="text-red-600 text-left ml-6 mb-4">{errorMessage}</p>}
             <label 
             htmlFor="module_title" 
-            className="block text-left pl-6 text-lg">Module Title</label>
+            className="block text-left pl-6 text-lg">Module Title<span className="text-red-500">*</span></label>
             <input type="text" 
                 value={currentModule?.title || ''} 
                 onChange={handleChange}  

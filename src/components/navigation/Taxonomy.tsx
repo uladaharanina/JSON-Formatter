@@ -155,7 +155,7 @@ export const Taxonomy: React.FC<Props> = ({closeForm}:Props) => {
             {
                 errorMessage && <p className="text-red-600 text-left mb-4">{errorMessage}</p>
             }
-            <label htmlFor="unit_title" className="block text-xl mt-2">Unit Title</label>
+            <label htmlFor="unit_title" className="block text-xl mt-2">Unit Title<span className="text-red-500">*</span></label>
             <input type="text" required id="unit_title" 
             
             onChange ={handleInputChanges}   
