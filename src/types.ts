@@ -14,6 +14,7 @@ type AddActivityProps = {
 // Taxonomy Types (Activities, Topics, Modules, Units):
 
 type Activity = {
+  activityId: string,
   activityName: string,
   activityType: string,
   activityPath: string,

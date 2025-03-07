@@ -43,6 +43,7 @@ const createFilteredProxy: any = (data: Unit, excludeKeys = ["id", "prerequisite
 const removeFormatTags = (unit: Unit) => {
   // Quick helper method:
   const filterActivitiesArray = (activity:Activity) => ({
+    activityId: activity.activityId,
     activityName: activity.activityName,
     activityPath: activity.activityPath,
     activityType: activity.activityType

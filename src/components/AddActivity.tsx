@@ -2,10 +2,11 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { Activity, AddActivityProps } from "../types";
 
 import './AddActivity.css';
+import { IDsGenerator } from "../utils/IDsGenerator";
 
 function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
 
-  const [activity, setActivity] = useState<Activity>({ activityName: 'Default Activity Name', activityPath: './path', activityType: 'lecture', isILT: false, isIST: false, isPLT: false });
+  const [activity, setActivity] = useState<Activity>({ activityId: "", activityName: 'Default Activity Name', activityPath: './path', activityType: 'lecture', isILT: false, isIST: false, isPLT: false });
 
   useEffect(() => {
 
@@ -32,7 +33,7 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
     })
   }
 
-  const onSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if(!(activity.isILT || activity.isIST || activity.isPLT)) {
       alert('Need to choose at least one training format (ILT, IST, PST)')
@@ -40,6 +41,7 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
     }
 
     if (!hierarchyItem.hierarchyType) return;
+    activity.activityId = await IDsGenerator(activity.activityName);
     addActivityFunc(activity, hierarchyItem.hierarchyType, hierarchyItem.id);
   }
 
