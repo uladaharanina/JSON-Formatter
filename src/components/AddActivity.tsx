@@ -55,17 +55,17 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
             <h3>"{hierarchyItem.title}"</h3>
           </div>
 
-          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Name</label>
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Name*</label>
           <input id="activity-name" type="text" className="block px-4 py-2 mt-2 border
             border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
              focus:ring-blue-500 focus:border-blue-500 transition duration-300 w-1/1" name='activityName' value={activity?.activityName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
 
-          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Path</label>
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Path*</label>
           <input id="activity-name" type="text" className="block px-4 py-2 mt-2 border
             border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2
              focus:ring-blue-500 focus:border-blue-500 transition duration-300 w-1/1" name='activityPath' value={activity?.activityPath} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeHandler(e)} />
 
-          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Type</label>
+          <label htmlFor="activity-name" className="block text-xl mt-2">Activity Type*</label>
           <select className=" border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 bg-white placeholder-gray-500
 " onChange={(e) => onChangeSelectHandler(e)} value={activity.activityType}>
             <option value='AdminTask'>Admin Task</option>
@@ -90,7 +90,9 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
             <option value='Office Hours'>Office Hours</option>
           </select>
 
+          <h3 className = 'block text-xl mt-2'>Applicable Formats (Choose At Least One):</h3>
           <div className='text-2xl flex justify-around'>
+            
             <div>
               <label htmlFor="ILT">ILT</label>
               <input id="ILT" checked={activity?.isILT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type='checkbox' name='isILT' />
