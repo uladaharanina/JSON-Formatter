@@ -201,9 +201,9 @@ function UnitDisplay() {
       (<div className='ml-12 my-6  bg-white rounded-lg shadow-md  flex justify-around'>
 
 
-        <div className=' h-[90vh] overflow-auto'>
+        <div className=' h-[90vh] w-[50%] overflow-auto'>
           {unitTaxonomy &&
-            <div className='unit'>
+            <div className='unit w-50'>
               <h1 className='unit-title font-bold'>{unitTaxonomy.title} (Unit)</h1>
               <h2 className='font-bold'>Activities:</h2>
               <ul className="max-w-md space-y-1 list-disc list-inside">

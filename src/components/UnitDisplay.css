@@ -1,6 +1,4 @@
-.container {
-  width: 60%;
-}
+
 
 .add-activity {
   /* position: fixed;
@@ -15,10 +13,6 @@
 }
 
 .unit-title {
-  font-size: 50px;
-}
-
-.unit-description {
   font-size: 35px;
 }
 
@@ -30,9 +24,6 @@
   font-size: 30px;
 }
 
-.module-description {
-  font-size: 20px;
-}
 
 .topic {
   margin-left: 5%;

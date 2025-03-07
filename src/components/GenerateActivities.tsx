@@ -8,7 +8,7 @@ const GenerateActivities = () => {
 
 
   return (
-    <section className="min-h-screen bg-gray-100 text-gray-900 py-10">
+    <section className="min-h-screen bg-gray-100 text-gray-900">
       <UnitDisplay />
     </section>
   )

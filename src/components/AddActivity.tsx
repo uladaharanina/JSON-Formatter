@@ -35,7 +35,7 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
 
   const onSubmitHandler = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(!(activity.isILT || activity.isIST || activity.isPLT)) {
+    if (!(activity.isILT || activity.isIST || activity.isPLT)) {
       alert('Need to choose at least one training format (ILT, IST, PST)')
       return;
     }
@@ -90,12 +90,23 @@ function AddActivity({ hierarchyItem, addActivityFunc }: AddActivityProps) {
             <option value='Office Hours'>Office Hours</option>
           </select>
 
-          <label htmlFor="ILT">ILT</label>
-          <input id = "ILT" checked={activity?.isILT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isILT'/>
-          <label htmlFor="IST">IST</label>
-          <input id = "IST" checked={activity?.isIST} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isIST'/>
-          <label htmlFor="PLT">PLT</label>
-          <input id = "PLT" checked={activity?.isPLT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type = 'checkbox' name = 'isPLT'/>
+          <div className='text-2xl flex justify-around'>
+            <div>
+              <label htmlFor="ILT">ILT</label>
+              <input id="ILT" checked={activity?.isILT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type='checkbox' name='isILT' />
+            </div>
+
+            <div>
+              <label htmlFor="IST">IST</label>
+              <input id="IST" checked={activity?.isIST} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type='checkbox' name='isIST' />
+            </div>
+
+            <div>
+              <label htmlFor="PLT">PLT</label>
+              <input id="PLT" checked={activity?.isPLT} onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChangeCheckboxHandler(e)} type='checkbox' name='isPLT' />
+            </div>
+
+          </div>
 
 
           <button className="mt-2 m-2 py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 
