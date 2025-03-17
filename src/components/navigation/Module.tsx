@@ -121,15 +121,7 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
             <label htmlFor="module_description" 
             className="block text-left pl-6 text-lg ">Topics</label>
 
-            <button type="button"  
-                    className="bg-gray-700 ml-6
-                    my-5 hover:bg-blue-700 text-white font-bold py-2 px-4 
-                    rounded flex items-center"
-                    onClick={() => setdisplayTopicModule(true)}>
-
-                    <IoMdAddCircle className="text-amber-50 mr-2"></IoMdAddCircle >
-                    <span>Add Topic</span>
-                </button>
+          
             {/*Display Topic form*/}
             <div>
                 {displayTopicModule && <Topic closeTopic={() => setdisplayTopicModule(false)} addTopicToArray={addTopicToArray}></Topic>}
@@ -149,6 +141,15 @@ export const Module: React.FC<Props> = ({ closeModule, AddModuleToArray } : Prop
                     </div>
                 ))
              }
+               <button type="button"  
+                    className="bg-gray-700 ml-6
+                    my-5 hover:bg-blue-700 text-white font-bold py-2 px-4 
+                    rounded flex items-center"
+                    onClick={() => setdisplayTopicModule(true)}>
+
+                    <IoMdAddCircle className="text-amber-50 mr-2"></IoMdAddCircle >
+                    <span>Add Topic</span>
+                </button>
 
             <input type="submit" 
              className="w-[70%] block py-3 px-6 mx-auto my-5 mt-12
